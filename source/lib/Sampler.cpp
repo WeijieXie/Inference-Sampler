@@ -2,9 +2,9 @@
 template<typename REAL>
 Sampler<REAL>::Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc,std::vector<ParamInfo<REAL>> paraInfo)
 {
-    Observations<REAL> observation;
-    this->observation = observation;
-    this->observation.loadData(filePath);
+    Observations<REAL> observations;
+    this->observations = observations;
+    this->observations.loadData(filePath);
     
     this->modelFunc = modelFunc;
 
@@ -32,9 +32,9 @@ template void Sampler<double>::modelFuncSetter(std::function<double(double, cons
 template <typename REAL>
 REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
 {
-    std::vector<REAL> inputs = observation.inputs;
-    std::vector<REAL> outputs = observation.outputs;
-    std::vector<REAL> sigmas = observation.sigmas;
+    std::vector<REAL> inputs = observations.inputs;
+    std::vector<REAL> outputs = observations.outputs;
+    std::vector<REAL> sigmas = observations.sigmas;
     auto it_inputs = inputs.begin();
     auto it_outputs = outputs.begin();
     auto it_sigmas = sigmas.begin();

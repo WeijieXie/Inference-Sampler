@@ -28,9 +28,9 @@ template <typename REAL>
 class Sampler
 {
 protected:
-    Observations<REAL> observation;
+    Observations<REAL> observations;
     std::vector<ParamInfo<REAL>> paraInfo;
-    std::vector<REAL> sampledChain;
+    std::vector<std::vector<REAL>> sampledChain;
     std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc;
     int numBins = 100;
     // std::function<REAL(REAL, std::vector<REAL>&)> : modelFunc(std::move(f)){};
