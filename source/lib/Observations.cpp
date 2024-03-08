@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <sstream>
-
 template<typename REAL>
 void Observations<REAL>::loadData(std::string filename)
 {
@@ -21,8 +20,12 @@ void Observations<REAL>::loadData(std::string filename)
         outputs.push_back(buffer);
         line_stream >> buffer;
         sigmas.push_back(buffer);
+        if (line_stream.fail() == 1)
+            throw std::invalid_argument("unmatched type appears in the line: " + line);
     }
+    // std::cout<<"inputs: "<<inputs[1]<<std::endl;
+    // std::cout<<"outputs: "<<outputs[0]<<std::endl;
+    // std::cout<<"sigmas: "<<sigmas[2]<<std::endl;
 }
-
 template void Observations<double>::loadData(std::string);
 template void Observations<float>::loadData(std::string);
