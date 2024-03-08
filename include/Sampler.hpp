@@ -1,4 +1,7 @@
+#pragma once
+
 #include "Observations.hpp"
+
 #include <vector>
 #include <string>
 #include <functional>
@@ -7,7 +10,6 @@
  *
  * @tparam REAL: type representing real numbers; usually float or double.
  */
-#pragma once
 template <typename REAL>
 class ParamInfo
 {
@@ -21,20 +23,22 @@ public:
     REAL max = 1;
     REAL width = max - min;
     std::string name;
-};
+};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 template <typename REAL>
 class Sampler
 {
-public:
-    Sampler() = default;
-    Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc);
-    ~Sampler(){};
+protected:
     Observations<REAL> observation;
     std::vector<ParamInfo<REAL>> paraInfo;
     std::vector<REAL> sampledChain;
     std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc;
     int numBins = 100;
     // std::function<REAL(REAL, std::vector<REAL>&)> : modelFunc(std::move(f)){};
+public:
+    Sampler() = default;
+    Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo);
+    ~Sampler(){};
+
     virtual void sample() = 0;
     void paraInfoSetter(std::string name, REAL min, REAL max);
     void modelFuncSetter(std::function<REAL(REAL x, const std::vector<REAL>&)> paras);

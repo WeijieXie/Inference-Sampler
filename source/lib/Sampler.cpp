@@ -1,15 +1,17 @@
 #include "Sampler.hpp"
 template<typename REAL>
-Sampler<REAL>::Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc)
+Sampler<REAL>::Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc,std::vector<ParamInfo<REAL>> paraInfo)
 {
     Observations<REAL> observation;
     this->observation = observation;
     this->observation.loadData(filePath);
     
     this->modelFunc = modelFunc;
+
+    this->paraInfo = paraInfo;
 }
-template Sampler<float>::Sampler(std::string filePath,std::function<float(float, const std::vector<float>&)> modelFunc);
-template Sampler<double>::Sampler(std::string filePath,std::function<double(double, const std::vector<double>&)> modelFunc);
+template Sampler<float>::Sampler(std::string filePath,std::function<float(float, const std::vector<float>&)> modelFunc,std::vector<ParamInfo<float>> paraInfo);
+template Sampler<double>::Sampler(std::string filePath,std::function<double(double, const std::vector<double>&)> modelFunc,std::vector<ParamInfo<double>> paraInfo);
 
 template<typename REAL>
 void Sampler<REAL>::paraInfoSetter(std::string name, REAL min, REAL max)
