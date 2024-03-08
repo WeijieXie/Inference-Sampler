@@ -1,13 +1,13 @@
+#include "Observations.hpp"
 #include <vector>
-#include <string> 
-
+#include <string>
+#include <functional>
 /**
  * @brief Class for holding / passing information about parameters to be sampled
- * 
- * @tparam REAL: type representing real numbers; usually float or double.  
+ *
+ * @tparam REAL: type representing real numbers; usually float or double.
  */
 #pragma once
-
 template <typename REAL>
 class ParamInfo
 {
@@ -22,9 +22,21 @@ public:
     REAL width = max - min;
     std::string name;
 };
-
-template<typename REAL>
+template <typename REAL>
 class Sampler
 {
-    
+public:
+    Sampler() = default;
+    Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc);
+    ~Sampler(){};
+    Observations<REAL> observation;
+    std::vector<ParamInfo<REAL>> paraInfo;
+    std::vector<REAL> sampledChain;
+    std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc;
+    int numBins = 100;
+    // std::function<REAL(REAL, std::vector<REAL>&)> : modelFunc(std::move(f)){};
+    virtual void sample() = 0;
+    void paraInfoSetter(std::string name, REAL min, REAL max);
+    void modelFuncSetter(std::function<REAL(REAL x, const std::vector<REAL>&)> paras);
+    REAL likelihood(const std::vector<REAL>& paras);
 };
