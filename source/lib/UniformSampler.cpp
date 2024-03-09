@@ -1,32 +1,55 @@
 #include "UniformSampler.hpp"
 
+#include <iostream>
+#include <string>
+
 template <typename REAL>
 void UniformSampler<REAL>::sample()
 {
     int numParas = this->paraInfo.size();
     int numSample = pow(this->numBins,numParas);
     int index;
-    REAL para;
+    REAL width;
+    REAL paraValue;
 
     std::vector<REAL> mins;
-    std::vector<REAL> width;
-    std::vector<REAL> Sample;
+    std::vector<REAL> widths;
+    // std::vector<REAL> sample;
+
+    this->sampledChain.clear();
 
     for(auto iter = this->paraInfo.begin(); iter < this->paraInfo.end(); iter++)
     {
-        mins.push_back(*iter->min);
-        width.push_back((*iter->max-*iter->max)/this->numBins);
+        mins.push_back(iter->min);
+        std::cout<<"min: "<<iter->min<<std::endl;
+        width = (iter->max-iter->min)/this->numBins;
+        widths.push_back(width);
+        std::cout<<"width: "<<width<<std::endl;
     }
 
-    for(uint i = 0; i < numSample; i++)
+    for(int i = 0; i < numSample; i++)
     {
-        for(uint j = 0; j < numSample; j++) 
+        // sample.clear();
+        std::vector<REAL> sample;
+        for(int j = 0; j < numParas; j++) 
         {
-            index = i/pow(this->numBins,j);
-            para = mins.at(j) + (index+0.5)*width.at(j);
-            Sample.push_back(index+0.5);
+            // std::cout<<"size1: "<<sample.size()<<std::endl;
+            index = (i%int(pow(this->numBins,j+1)))/(int(pow(this->numBins,j)));
+            std::cout<<"index"<<j<<": "<<index<<std::endl;
+            paraValue = mins.at(j) + (index+0.5)*widths.at(j);
+            std::cout<<"paraValue"<<j<<","<<index<<": "<<paraValue<<std::endl;
+            sample.push_back(paraValue);
         }
-        Sample.push_back(this->likelihood(Sample));
-        this->sampledChain.push_back(Sample);
+        // std::cout<<"size2: "<<sample.size()<<std::endl;
+        std::cout<<"this->likelihood(sample): "<<this->likelihood(sample)<<std::endl;
+        sample.push_back(this->likelihood(sample));
+        // std::cout<<"size3: "<<sample.size()<<std::endl;
+        for (REAL val : sample) {
+            std::cout << val << std::endl;
+        }
+        this->sampledChain.push_back(sample);
     }
 }
+
+template void UniformSampler<float>::sample();
+template void UniformSampler<double>::sample();
