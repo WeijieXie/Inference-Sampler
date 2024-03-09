@@ -37,7 +37,7 @@ void UniformSampler<REAL>::sample()
             index = (i%int(pow(this->numBins,j+1)))/(int(pow(this->numBins,j)));
             // std::cout<<"index"<<j<<": "<<index<<std::endl;
             paraValue = mins.at(j) + (index+0.5)*widths.at(j);
-            std::cout<<"paraValue"<<j<<","<<index<<": "<<paraValue<<std::endl;
+            // std::cout<<"paraValue"<<j<<","<<index<<": "<<paraValue<<std::endl;
             sample.push_back(paraValue);
         }
         // std::cout<<"size2: "<<sample.size()<<std::endl;
