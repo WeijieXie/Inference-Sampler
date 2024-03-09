@@ -30,19 +30,23 @@ class Sampler
 protected:
     Observations<REAL> observations;
     std::vector<ParamInfo<REAL>> paraInfo;
-    std::vector<std::vector<REAL>> sampledChain;
     std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc;
     int numBins = 100;
+
+    std::vector<std::vector<REAL>> sampledChain;
+    std::vector<std::vector<REAL>> marDis;
     // std::function<REAL(REAL, std::vector<REAL>&)> : modelFunc(std::move(f)){};
+
+    REAL likelihood(const std::vector<REAL>& paras);
 public:
-    Sampler() = default;
-    Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo);
+    Sampler()=default;
+    Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo,int numBins = 100);
     ~Sampler(){};
 
-    virtual void sample() = 0;
     void paraInfoSetter(std::string name, REAL min, REAL max);
     void modelFuncSetter(std::function<REAL(REAL x, const std::vector<REAL>&)> paras);
     void numBinsSetter(int numBins);
-    REAL likelihood(const std::vector<REAL>& paras);
     std::vector<std::vector<REAL>> sampledChainGetter();
+
+    virtual void sample() = 0;
 };

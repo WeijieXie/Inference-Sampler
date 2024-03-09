@@ -1,6 +1,6 @@
 #include "Sampler.hpp"
 template<typename REAL>
-Sampler<REAL>::Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc,std::vector<ParamInfo<REAL>> paraInfo)
+Sampler<REAL>::Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc,std::vector<ParamInfo<REAL>> paraInfo,int numBins)
 {
     Observations<REAL> observations;
     this->observations = observations;
@@ -9,14 +9,19 @@ Sampler<REAL>::Sampler(std::string filePath,std::function<REAL(REAL, const std::
     this->modelFunc = modelFunc;
 
     this->paraInfo = paraInfo;
+
+    this->numBins = numBins;
+
+    this->marDis = std::vector(paraInfo.size(),std::vector<REAL>(numBins));
 }
-template Sampler<float>::Sampler(std::string filePath,std::function<float(float, const std::vector<float>&)> modelFunc,std::vector<ParamInfo<float>> paraInfo);
-template Sampler<double>::Sampler(std::string filePath,std::function<double(double, const std::vector<double>&)> modelFunc,std::vector<ParamInfo<double>> paraInfo);
+template Sampler<float>::Sampler(std::string filePath,std::function<float(float, const std::vector<float>&)> modelFunc,std::vector<ParamInfo<float>> paraInfo,int numBins);
+template Sampler<double>::Sampler(std::string filePath,std::function<double(double, const std::vector<double>&)> modelFunc,std::vector<ParamInfo<double>> paraInfo,int numBins);
 
 template<typename REAL>
 void Sampler<REAL>::paraInfoSetter(std::string name, REAL min, REAL max)
 {
     paraInfo.push_back(ParamInfo(min,max,name));
+    this->marDis = std::vector(this->paraInfo.size(),std::vector<REAL>(this->numBins));
 }
 template void Sampler<float>::paraInfoSetter(std::string name, float min, float max);
 template void Sampler<double>::paraInfoSetter(std::string name, double min, double max);
@@ -33,6 +38,7 @@ template <typename REAL>
 void Sampler<REAL>::numBinsSetter(int numBins)
 {
     this->numBins = numBins;
+    this->marDis = std::vector(this->paraInfo.size(),std::vector<REAL>(this->numBins));
 }
 template void Sampler<float>::numBinsSetter(int numBins);
 template void Sampler<double>::numBinsSetter(int numBins);
