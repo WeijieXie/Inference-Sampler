@@ -42,5 +42,7 @@ public:
     virtual void sample() = 0;
     void paraInfoSetter(std::string name, REAL min, REAL max);
     void modelFuncSetter(std::function<REAL(REAL x, const std::vector<REAL>&)> paras);
+    void numBinsSetter(int numBins);
     REAL likelihood(const std::vector<REAL>& paras);
+    std::vector<std::vector<REAL>> sampledChainGetter();
 };

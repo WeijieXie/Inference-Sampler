@@ -30,6 +30,22 @@ template void Sampler<float>::modelFuncSetter(std::function<float(float, const s
 template void Sampler<double>::modelFuncSetter(std::function<double(double, const std::vector<double> &)> modelFunc);
 
 template <typename REAL>
+void Sampler<REAL>::numBinsSetter(int numBins)
+{
+    this->numBins = numBins;
+}
+template void Sampler<float>::numBinsSetter(int numBins);
+template void Sampler<double>::numBinsSetter(int numBins);
+
+template <typename REAL>
+std::vector<std::vector<REAL>> Sampler<REAL>::sampledChainGetter()
+{
+    return this->sampledChain;
+}
+template std::vector<std::vector<float>> Sampler<float>::sampledChainGetter();
+template std::vector<std::vector<double>> Sampler<double>::sampledChainGetter();
+
+template <typename REAL>
 REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
 {
     std::vector<REAL> inputs = observations.inputs;
@@ -57,4 +73,6 @@ REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
 }
 template float Sampler<float>::likelihood(const std::vector<float> &paras);
 template double Sampler<double>::likelihood(const std::vector<double> &paras);
+
+
 
