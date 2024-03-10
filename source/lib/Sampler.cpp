@@ -12,7 +12,7 @@ Sampler<REAL>::Sampler(std::string filePath,std::function<REAL(REAL, const std::
 
     this->numBins = numBins;
 
-    this->marDis = std::vector(paraInfo.size(),std::vector<REAL>(numBins));
+    this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
 }
 template Sampler<float>::Sampler(std::string filePath,std::function<float(float, const std::vector<float>&)> modelFunc,std::vector<ParamInfo<float>> paraInfo,int numBins);
 template Sampler<double>::Sampler(std::string filePath,std::function<double(double, const std::vector<double>&)> modelFunc,std::vector<ParamInfo<double>> paraInfo,int numBins);
@@ -21,7 +21,8 @@ template<typename REAL>
 void Sampler<REAL>::paraInfoSetter(std::string name, REAL min, REAL max)
 {
     paraInfo.push_back(ParamInfo(min,max,name));
-    this->marDis = std::vector(this->paraInfo.size(),std::vector<REAL>(this->numBins));
+    // this->marDis = std::vector(this->paraInfo.size(),std::vector<REAL>(this->numBins));
+    this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
 }
 template void Sampler<float>::paraInfoSetter(std::string name, float min, float max);
 template void Sampler<double>::paraInfoSetter(std::string name, double min, double max);
@@ -38,7 +39,7 @@ template <typename REAL>
 void Sampler<REAL>::numBinsSetter(int numBins)
 {
     this->numBins = numBins;
-    this->marDis = std::vector(this->paraInfo.size(),std::vector<REAL>(this->numBins));
+    this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
 }
 template void Sampler<float>::numBinsSetter(int numBins);
 template void Sampler<double>::numBinsSetter(int numBins);
@@ -50,6 +51,14 @@ std::vector<std::vector<REAL>> Sampler<REAL>::sampledChainGetter()
 }
 template std::vector<std::vector<float>> Sampler<float>::sampledChainGetter();
 template std::vector<std::vector<double>> Sampler<double>::sampledChainGetter();
+
+template <typename REAL>
+std::vector<std::vector<REAL>> Sampler<REAL>::marDisGetter()
+{
+    return this->marDis;
+}
+template std::vector<std::vector<float>> Sampler<float>::marDisGetter();
+template std::vector<std::vector<double>> Sampler<double>::marDisGetter();
 
 template <typename REAL>
 REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)

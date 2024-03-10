@@ -47,6 +47,7 @@ public:
     void modelFuncSetter(std::function<REAL(REAL x, const std::vector<REAL>&)> paras);
     void numBinsSetter(int numBins);
     std::vector<std::vector<REAL>> sampledChainGetter();
+    std::vector<std::vector<REAL>> marDisGetter();
 
     virtual void sample() = 0;
 };
