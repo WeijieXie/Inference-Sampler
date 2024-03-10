@@ -15,6 +15,7 @@ void UniformSampler<REAL>::sample()
 
     std::vector<REAL> sample;
     std::vector<int> indexes;
+    std::vector<REAL> normSum(numParas);
 
     std::vector<REAL> mins;
     std::vector<REAL> widths;
@@ -55,6 +56,7 @@ void UniformSampler<REAL>::sample()
         {
 
             this->marDis.at(k).at(indexes.at(k))+=std::exp(likeliHood);
+            normSum.at(k)+=std::exp(likeliHood);
             // this->marDis[k][indexes[k]]+=likeliHood;
         }
 
@@ -65,14 +67,14 @@ void UniformSampler<REAL>::sample()
         this->sampledChain.push_back(sample);
     }
 
-    // for (int i = 0; i < numSample; i++)
-    // {
+    for (int i = 0; i < numParas; i++)
+    {
         
-    //     for (auto iter=this->sampledChain.begin();iter<this->sampledChain.end()-1;iter++)
-    //     {
-
-    //     }
-    // }
+        for (int j = 0; j < this->numBins; j++)
+        {
+            this->marDis.at(i).at(j)=this->marDis.at(i).at(j)/normSum.at(i);
+        }
+    }
 }
 
 template void UniformSampler<float>::sample();
