@@ -12,6 +12,8 @@ public:
 
     static const std::vector<std::vector<double>> sample_points_3d;
 
+    static const std::vector<std::vector<double>> marginal_distribution_2d;
+
     static const std::function<double(double, const std::vector<double>&)> modelFunc;
 
     static const ParamInfo<double> paraInfo1;
