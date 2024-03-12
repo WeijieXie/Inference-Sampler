@@ -14,9 +14,9 @@ Sampler<REAL>::Sampler(std::string filePath, std::function<REAL(REAL, const std:
     this->numBins = numBins;
 
     this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
-    this->paraPeaks = std::vector<REAL>(this->numParas);
-    this->paraMeans = std::vector<REAL>(this->numParas);
-    this->paraStdDev = std::vector<REAL>(this->numParas);
+    this->peaks = std::vector<REAL>(this->numParas);
+    this->means = std::vector<REAL>(this->numParas);
+    this->stdDevs = std::vector<REAL>(this->numParas);
 }
 template Sampler<float>::Sampler(std::string filePath, std::function<float(float, const std::vector<float> &)> modelFunc, std::vector<ParamInfo<float>> paraInfo, int numBins);
 template Sampler<double>::Sampler(std::string filePath, std::function<double(double, const std::vector<double> &)> modelFunc, std::vector<ParamInfo<double>> paraInfo, int numBins);
@@ -65,28 +65,28 @@ template std::vector<std::vector<float>> Sampler<float>::marDisGetter();
 template std::vector<std::vector<double>> Sampler<double>::marDisGetter();
 
 template <typename REAL>
-std::vector<REAL> Sampler<REAL>::paraPeaksGetter()
+std::vector<REAL> Sampler<REAL>::peaksGetter()
 {
-    return this->paraPeaks;
+    return this->peaks;
 }
-template std::vector<float> Sampler<float>::paraPeaksGetter();
-template std::vector<double> Sampler<double>::paraPeaksGetter();
+template std::vector<float> Sampler<float>::peaksGetter();
+template std::vector<double> Sampler<double>::peaksGetter();
 
 template <typename REAL>
-std::vector<REAL> Sampler<REAL>::paraMeansGetter()
+std::vector<REAL> Sampler<REAL>::meansGetter()
 {
-    return this->paraMeans;
+    return this->means;
 }
-template std::vector<float> Sampler<float>::paraMeansGetter();
-template std::vector<double> Sampler<double>::paraMeansGetter();
+template std::vector<float> Sampler<float>::meansGetter();
+template std::vector<double> Sampler<double>::meansGetter();
 
 template <typename REAL>
-std::vector<REAL> Sampler<REAL>::paraStdDevGetter()
+std::vector<REAL> Sampler<REAL>::stdDevsGetter()
 {
-    return this->paraStdDev;
+    return this->stdDevs;
 }
-template std::vector<float> Sampler<float>::paraStdDevGetter();
-template std::vector<double> Sampler<double>::paraStdDevGetter();
+template std::vector<float> Sampler<float>::stdDevsGetter();
+template std::vector<double> Sampler<double>::stdDevsGetter();
 
 template <typename REAL>
 REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
@@ -117,4 +117,3 @@ REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
 }
 template float Sampler<float>::likelihood(const std::vector<float> &paras);
 template double Sampler<double>::likelihood(const std::vector<double> &paras);
-

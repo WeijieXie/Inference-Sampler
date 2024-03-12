@@ -34,13 +34,16 @@ protected:
     int numParas;
     int numBins = 100;
 
+    std::vector<REAL> paraMins;
+    std::vector<REAL> binWidth;
+
     std::vector<std::vector<REAL>> sampledChain;
     std::vector<std::vector<REAL>> marDis;
     // std::function<REAL(REAL, std::vector<REAL>&)> : modelFunc(std::move(f)){};
 
-    std::vector<REAL> paraPeaks;
-    std::vector<REAL> paraMeans;
-    std::vector<REAL> paraStdDev;
+    std::vector<REAL> peaks;
+    std::vector<REAL> means;
+    std::vector<REAL> stdDevs;
 
     REAL likelihood(const std::vector<REAL>& paras);
 public:
@@ -54,9 +57,9 @@ public:
     std::vector<std::vector<REAL>> sampledChainGetter();
     std::vector<std::vector<REAL>> marDisGetter();
 
-    std::vector<REAL> paraPeaksGetter();
-    std::vector<REAL> paraMeansGetter();
-    std::vector<REAL> paraStdDevGetter();
+    std::vector<REAL> peaksGetter();
+    std::vector<REAL> meansGetter();
+    std::vector<REAL> stdDevsGetter();
 
     void summaryCalculator();
 
