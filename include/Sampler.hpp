@@ -53,9 +53,9 @@ public:
     std::vector<std::vector<REAL>> sampledChainGetter();
     std::vector<std::vector<REAL>> marDisGetter();
 
-    std::vector<std::vector<REAL>> paraPeaksGetter();
-    std::vector<std::vector<REAL>> paraMeansGetter();
-    std::vector<std::vector<REAL>> paraStdDevGetter();
+    std::vector<REAL> paraPeaksGetter();
+    std::vector<REAL> paraMeansGetter();
+    std::vector<REAL> paraStdDevGetter();
 
     void summaryCalculator();
 
