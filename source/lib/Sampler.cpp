@@ -118,3 +118,59 @@ REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
 template float Sampler<float>::likelihood(const std::vector<float> &paras);
 template double Sampler<double>::likelihood(const std::vector<double> &paras);
 
+template <typename REAL>
+void Sampler<REAL>::summaryCalculator()
+{
+    int numParas = this->numParas;
+    int numBins = this->numBins;
+
+    REAL paraMin = 0;
+    REAL binWidth = 0;
+
+    REAL marDis = 0;
+    REAL peak = 0;
+    REAL paraVal = 0;
+    REAL mean = 0;
+    REAL stdDev = 0;
+
+    REAL peakParaValue = 0;
+    REAL sum = 0;
+    REAL sumForDev = 0;
+
+    this->peaks.clear();
+    this->means.clear();
+    this->stdDevs.clear();
+
+    for (int i = 0; i < numParas; i++)
+    {
+        sum = 0;
+        sumForDev = 0;
+        peak = 0;
+        paraMin = this->paraMins.at(i);
+        binWidth = this->binWidths.at(i);
+        for (int j = 0; j < numBins; j++)
+        {
+            marDis = this->marDis[i][j];
+            paraVal = paraMin + (j + 0.5) * binWidth;
+            sum = +marDis * paraVal;
+            sumForDev = +marDis * paraVal * paraVal;
+            if (marDis > peak)
+            {
+                peak = marDis;
+                peakParaValue = paraVal;
+            }
+        }
+        mean = sum / numBins;
+        stdDev = sqrt(sumForDev - pow(sum / numBins, 2));
+        peaks.push_back(peakParaValue);
+        means.push_back(mean);
+        stdDevs.push_back(stdDev);
+        std::cout << "For parameter"<< "\"" << this->paraInfo[i].name << "\": "
+                  << "peak_value = " << peakParaValue 
+                  << "; mean = " << mean 
+                  << ";std_deviation = " << stdDev 
+                  << std::endl;
+    }
+}
+template void Sampler<float>::summaryCalculator();
+template void Sampler<double>::summaryCalculator();

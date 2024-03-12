@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <cmath>
+#include <iostream>
 /**
  * @brief Class for holding / passing information about parameters to be sampled
  *
