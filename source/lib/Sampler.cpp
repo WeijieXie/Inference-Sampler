@@ -61,6 +61,30 @@ template std::vector<std::vector<float>> Sampler<float>::marDisGetter();
 template std::vector<std::vector<double>> Sampler<double>::marDisGetter();
 
 template <typename REAL>
+std::vector<REAL> Sampler<REAL>::paraPeaksGetter()
+{
+    return this->paraPeaks;
+}
+template std::vector<float> Sampler<float>::paraPeaksGetter();
+template std::vector<double> Sampler<double>::paraPeaksGetter();
+
+template<typename REAL>
+std::vector<REAL> Sampler<REAL>::paraMeansGetter()
+{
+    return this->paraMeans;
+}
+template std::vector<float> Sampler<float>::paraMeansGetter();
+template std::vector<double> Sampler<double>::paraMeansGetter();
+
+template <typename REAL>
+std::vector<REAL> Sampler<REAL>::paraStdDevGetter()
+{
+    return this->paraStdDev;
+}
+template std::vector<float> Sampler<float>::paraStdDevGetter();
+template std::vector<double> Sampler<double>::paraStdDevGetter();
+
+template <typename REAL>
 REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
 {
     std::vector<REAL> inputs = observations.inputs;
