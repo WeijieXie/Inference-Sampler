@@ -37,6 +37,10 @@ protected:
     std::vector<std::vector<REAL>> marDis;
     // std::function<REAL(REAL, std::vector<REAL>&)> : modelFunc(std::move(f)){};
 
+    std::vector<REAL> paraPeaks;
+    std::vector<REAL> paraMeans;
+    std::vector<REAL> paraStdDev;
+
     REAL likelihood(const std::vector<REAL>& paras);
 public:
     Sampler()=default;
@@ -48,6 +52,12 @@ public:
     void numBinsSetter(int numBins);
     std::vector<std::vector<REAL>> sampledChainGetter();
     std::vector<std::vector<REAL>> marDisGetter();
+
+    std::vector<std::vector<REAL>> paraPeaksGetter();
+    std::vector<std::vector<REAL>> paraMeansGetter();
+    std::vector<std::vector<REAL>> paraStdDevGetter();
+
+    void summaryCalculator();
 
     virtual void sample() = 0;
 };
