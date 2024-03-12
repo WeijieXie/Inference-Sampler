@@ -17,18 +17,18 @@ void UniformSampler<REAL>::sample()
     std::vector<int> indexes;
     std::vector<REAL> normSum(numParas);
 
-    std::vector<REAL> mins;
-    std::vector<REAL> widths;
+    // std::vector<REAL> this->paraMins;
+    // std::vector<REAL> this->binWidths;
     // std::vector<REAL> sample;
 
     this->sampledChain.clear();
 
     for (auto iter = this->paraInfo.begin(); iter < this->paraInfo.end(); iter++)
     {
-        mins.push_back(iter->min);
+        this->paraMins.push_back(iter->min);
         // std::cout<<"min: "<<iter->min<<std::endl;
         width = (iter->max - iter->min) / this->numBins;
-        widths.push_back(width);
+        this->binWidths.push_back(width);
         // std::cout<<"width: "<<width<<std::endl;
     }
 
@@ -41,7 +41,7 @@ void UniformSampler<REAL>::sample()
             // std::cout<<"size1: "<<sample.size()<<std::endl;
             index = (i % int(pow(this->numBins, j + 1))) / (int(pow(this->numBins, j)));
             // std::cout<<"index"<<j<<": "<<index<<std::endl;
-            paraValue = mins.at(j) + (index + 0.5) * widths.at(j);
+            paraValue = this->paraMins.at(j) + (index + 0.5) * this->binWidths.at(j);
             // std::cout<<"paraValue"<<j<<","<<index<<": "<<paraValue<<std::endl;
             sample.push_back(paraValue);
             indexes.push_back(index);

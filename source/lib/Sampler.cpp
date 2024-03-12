@@ -117,3 +117,4 @@ REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
 }
 template float Sampler<float>::likelihood(const std::vector<float> &paras);
 template double Sampler<double>::likelihood(const std::vector<double> &paras);
+

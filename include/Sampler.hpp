@@ -35,7 +35,7 @@ protected:
     int numBins = 100;
 
     std::vector<REAL> paraMins;
-    std::vector<REAL> binWidth;
+    std::vector<REAL> binWidths;
 
     std::vector<std::vector<REAL>> sampledChain;
     std::vector<std::vector<REAL>> marDis;
