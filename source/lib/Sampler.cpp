@@ -128,7 +128,7 @@ void Sampler<REAL>::summaryCalculator()
     REAL binWidth = 0;
 
     REAL marDis = 0;
-    REAL peak = 0;
+    REAL maxMarDis = 0;
     REAL paraVal = 0;
     REAL mean = 0;
     REAL stdDev = 0;
@@ -145,30 +145,32 @@ void Sampler<REAL>::summaryCalculator()
     {
         sum = 0;
         sumForDev = 0;
-        peak = 0;
+        maxMarDis = 0;
         paraMin = this->paraMins.at(i);
         binWidth = this->binWidths.at(i);
         for (int j = 0; j < numBins; j++)
         {
             marDis = this->marDis[i][j];
             paraVal = paraMin + (j + 0.5) * binWidth;
-            sum = +marDis * paraVal;
-            sumForDev = +marDis * paraVal * paraVal;
-            if (marDis > peak)
+            sum += marDis * paraVal;
+            sumForDev += marDis * paraVal * paraVal;
+            // std::cout <<"para: "<<i<<" bin: "<<j<<" sumForDev: "<<sumForDev<<std::endl;
+            // std::cout <<"para: "<<i<<" bin: "<<j<<" marDis: "<<marDis<<std::endl;
+            if (marDis > maxMarDis)
             {
-                peak = marDis;
+                maxMarDis = marDis;
                 peakParaValue = paraVal;
             }
         }
         mean = sum / numBins;
-        stdDev = sqrt(sumForDev - pow(sum / numBins, 2));
+        stdDev = sqrt(sumForDev - pow(mean, 2));
         peaks.push_back(peakParaValue);
         means.push_back(mean);
         stdDevs.push_back(stdDev);
         std::cout << "For parameter"<< "\"" << this->paraInfo[i].name << "\": "
                   << "peak_value = " << peakParaValue 
                   << "; mean = " << mean 
-                  << ";std_deviation = " << stdDev 
+                  << "; std_deviation = " << stdDev 
                   << std::endl;
     }
 }
