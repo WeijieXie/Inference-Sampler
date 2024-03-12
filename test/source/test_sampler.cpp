@@ -214,3 +214,27 @@ TEST_CASE("Test Marginal Distribution 2D", "[Data Process]")
     // }
     // std::cout<<uniformSampler.sampledChainGetter()<<std::endl;
 }
+
+TEST_CASE("Test Summary Calculator", "[Data Process]")
+{
+    std::string filePath("test/test_data/testing_data_2D.txt");
+    std::function<double(double, const std::vector<double> &)> modelFunc = [](double x, const std::vector<double> &params) -> double
+    {
+        double result = params[0] * params[1] * x; // Example implementation
+        return result;
+    };
+    UniformSampler<double> uniformSampler(filePath, modelFunc, test_data::paraVec_2d);
+    uniformSampler.numBinsSetter(3);
+    uniformSampler.sample();
+    uniformSampler.summaryCalculator();
+
+    std::vector<double> paraPeaks;
+    std::vector<double> paraMeans;
+    std::vector<double> paraStdDevs;
+    paraPeaks = uniformSampler.peaksGetter();
+    paraMeans = uniformSampler.meansGetter();
+    paraStdDevs = uniformSampler.stdDevsGetter();
+    REQUIRE(paraPeaks[0]==paraPeaks[1]);
+    REQUIRE(paraMeans[0]==paraMeans[1]);
+    REQUIRE(paraStdDevs[0]==paraStdDevs[1]);
+}
