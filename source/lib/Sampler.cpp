@@ -1,26 +1,30 @@
 #include "Sampler.hpp"
-template<typename REAL>
-Sampler<REAL>::Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc,std::vector<ParamInfo<REAL>> paraInfo,int numBins)
+template <typename REAL>
+Sampler<REAL>::Sampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo, int numBins)
 {
     Observations<REAL> observations;
     this->observations = observations;
     this->observations.loadData(filePath);
-    
+
     this->modelFunc = modelFunc;
 
     this->paraInfo = paraInfo;
+    this->numParas = paraInfo.size();
 
     this->numBins = numBins;
 
     this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
+    this->paraPeaks = std::vector<REAL>(this->numParas);
+    this->paraMeans = std::vector<REAL>(this->numParas);
+    this->paraStdDev = std::vector<REAL>(this->numParas);
 }
-template Sampler<float>::Sampler(std::string filePath,std::function<float(float, const std::vector<float>&)> modelFunc,std::vector<ParamInfo<float>> paraInfo,int numBins);
-template Sampler<double>::Sampler(std::string filePath,std::function<double(double, const std::vector<double>&)> modelFunc,std::vector<ParamInfo<double>> paraInfo,int numBins);
+template Sampler<float>::Sampler(std::string filePath, std::function<float(float, const std::vector<float> &)> modelFunc, std::vector<ParamInfo<float>> paraInfo, int numBins);
+template Sampler<double>::Sampler(std::string filePath, std::function<double(double, const std::vector<double> &)> modelFunc, std::vector<ParamInfo<double>> paraInfo, int numBins);
 
-template<typename REAL>
+template <typename REAL>
 void Sampler<REAL>::paraInfoSetter(std::string name, REAL min, REAL max)
 {
-    paraInfo.push_back(ParamInfo(min,max,name));
+    paraInfo.push_back(ParamInfo(min, max, name));
     // this->marDis = std::vector(this->paraInfo.size(),std::vector<REAL>(this->numBins));
     this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
 }
@@ -68,7 +72,7 @@ std::vector<REAL> Sampler<REAL>::paraPeaksGetter()
 template std::vector<float> Sampler<float>::paraPeaksGetter();
 template std::vector<double> Sampler<double>::paraPeaksGetter();
 
-template<typename REAL>
+template <typename REAL>
 std::vector<REAL> Sampler<REAL>::paraMeansGetter()
 {
     return this->paraMeans;
@@ -97,21 +101,20 @@ REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
     REAL L = 0;
     REAL Li = 0;
     REAL err = 0;
-    while (it_inputs != inputs.end() && it_outputs != outputs.end() && it_sigmas != sigmas.end()) {
+    while (it_inputs != inputs.end() && it_outputs != outputs.end() && it_sigmas != sigmas.end())
+    {
         // Perform your operations with *it_inputs, *it_outputs, and *it_sigmas
-        pred = modelFunc(*it_inputs,paras);
-        err = pred-*it_outputs;
-        Li = -(err*err)/(2**it_sigmas**it_sigmas);
+        pred = modelFunc(*it_inputs, paras);
+        err = pred - *it_outputs;
+        Li = -(err * err) / (2 * *it_sigmas * *it_sigmas);
         L = L + Li;
         ++it_inputs;
         ++it_outputs;
         ++it_sigmas;
     }
-    
+
     return L;
 }
 template float Sampler<float>::likelihood(const std::vector<float> &paras);
 template double Sampler<double>::likelihood(const std::vector<double> &paras);
-
-
 

@@ -31,6 +31,7 @@ protected:
     Observations<REAL> observations;
     std::vector<ParamInfo<REAL>> paraInfo;
     std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc;
+    int numParas;
     int numBins = 100;
 
     std::vector<std::vector<REAL>> sampledChain;
