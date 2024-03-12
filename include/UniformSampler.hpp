@@ -2,8 +2,6 @@
 
 #include "Sampler.hpp"
 
-#include <cmath>
-
 template <typename REAL>
 class UniformSampler:public Sampler<REAL>
 {
