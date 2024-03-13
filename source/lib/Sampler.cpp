@@ -17,6 +17,7 @@ Sampler<REAL>::Sampler(std::string filePath, std::function<REAL(REAL, const std:
     this->peaks = std::vector<REAL>(this->numParas);
     this->means = std::vector<REAL>(this->numParas);
     this->stdDevs = std::vector<REAL>(this->numParas);
+
 }
 template Sampler<float>::Sampler(std::string filePath, std::function<float(float, const std::vector<float> &)> modelFunc, std::vector<ParamInfo<float>> paraInfo, int numBins);
 template Sampler<double>::Sampler(std::string filePath, std::function<double(double, const std::vector<double> &)> modelFunc, std::vector<ParamInfo<double>> paraInfo, int numBins);
@@ -164,9 +165,9 @@ void Sampler<REAL>::summaryCalculator()
         }
         mean = sum / numBins;
         stdDev = sqrt(sumForDev - pow(mean, 2));
-        peaks.push_back(peakParaValue);
-        means.push_back(mean);
-        stdDevs.push_back(stdDev);
+        this->peaks.push_back(peakParaValue);
+        this->means.push_back(mean);
+        this->stdDevs.push_back(stdDev);
         std::cout << "For parameter"<< "\"" << this->paraInfo[i].name << "\": "
                   << "peak_value = " << peakParaValue 
                   << "; mean = " << mean 

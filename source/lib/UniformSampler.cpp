@@ -9,7 +9,7 @@ void UniformSampler<REAL>::sample()
     int numParas = this->paraInfo.size();
     int numSample = pow(this->numBins, numParas);
     int index;
-    REAL width;
+    // REAL width;
     REAL paraValue;
     REAL likeliHood;
 
@@ -27,8 +27,7 @@ void UniformSampler<REAL>::sample()
     {
         this->paraMins.push_back(iter->min);
         // std::cout<<"min: "<<iter->min<<std::endl;
-        width = (iter->max - iter->min) / this->numBins;
-        this->binWidths.push_back(width);
+        this->binWidths.push_back((iter->max - iter->min) / this->numBins);
         // std::cout<<"width: "<<width<<std::endl;
     }
 
