@@ -7,7 +7,7 @@
 template <typename REAL>
 class MHSampler : public Sampler<REAL>
 {
-protected : 
+private : 
     int numPoints = 100000;
     REAL stepSize = 0.01;
 
