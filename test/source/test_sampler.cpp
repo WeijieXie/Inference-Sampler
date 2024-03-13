@@ -6,6 +6,7 @@
 #include "data.h"
 #include "Observations.hpp"
 #include "UniformSampler.hpp"
+#include "MHSampler.hpp"
 using namespace Catch::Matchers;
 template <typename REAL>
 void checkFileContents(Observations<REAL> &obs)
@@ -234,7 +235,75 @@ TEST_CASE("Test Summary Calculator", "[Data Process]")
     paraPeaks = uniformSampler.peaksGetter();
     paraMeans = uniformSampler.meansGetter();
     paraStdDevs = uniformSampler.stdDevsGetter();
-    REQUIRE(paraPeaks[0]==paraPeaks[1]);
-    REQUIRE(paraMeans[0]==paraMeans[1]);
-    REQUIRE(paraStdDevs[0]==paraStdDevs[1]);
+    REQUIRE(paraPeaks[0] == paraPeaks[1]);
+    REQUIRE(paraMeans[0] == paraMeans[1]);
+    REQUIRE(paraStdDevs[0] == paraStdDevs[1]);
+}
+
+TEST_CASE("Test", "[Data Process]")
+{
+    // std::random_device rd;
+    // std::default_random_engine eng(rd());
+    // std::normal_distribution<double> normalDist(0.0, 1.0);
+    // std::uniform_real_distribution<double> uniformDist(0.0, 1.0);
+    // for (int j = 0; j < 10; j++)
+    // {
+    //    std::cout<<normalDist(eng)<<"+"<<uniformDist(eng)<<std::endl;
+    // }
+    std::string filePath("test/test_data/testing_data_2D.txt");
+    std::function<double(double, const std::vector<double> &)> modelFunc = [](double x, const std::vector<double> &params) -> double
+    {
+        double result = params[0] * (1/x)- params[1] * x; // Example implementation
+        return result;
+    };
+
+    const ParamInfo<double> paraInfo1 = ParamInfo<double>(0, 5, "a");
+    const ParamInfo<double> paraInfo2 = ParamInfo<double>(0, 5, "b");
+    const std::vector<ParamInfo<double>> paraVec_2d = {paraInfo1, paraInfo2};
+
+    UniformSampler<double> uniformSampler(filePath, modelFunc, paraVec_2d);
+    uniformSampler.numBinsSetter(10);
+    uniformSampler.sample();
+    uniformSampler.summaryCalculator();
+
+    // std::string filePath("test/test_data/testing_data_2D.txt");
+    // std::function<double(double, const std::vector<double> &)> modelFunc = [](double x, const std::vector<double> &params) -> double
+    // {
+    //     double result = params[0] * params[1] * x; // Example implementation
+    //     return result;
+    // };
+
+    int numPoints = 10000;
+    double stepSize = 0.1;
+
+    MHSampler<double> mhSampler(filePath, modelFunc, paraVec_2d, numPoints, stepSize);
+    mhSampler.numBinsSetter(10);
+    mhSampler.sample();
+    mhSampler.summaryCalculator();
+
+    std::vector<std::vector<double>> mat1 = uniformSampler.marDisGetter();
+    // std::cout << mat.size() << " ";
+    for (const auto &row : mat1)
+    {
+        for (double val : row)
+        {
+            // REQUIRE_THAT(obs.outputs[0], WithinRel(0.97454, 0.0001));
+
+            std::cout << val << " ";
+        }
+        std::cout << '\n';
+    }
+
+    std::vector<std::vector<double>> mat2 = mhSampler.marDisGetter();
+    // std::cout << mat.size() << " ";
+    for (const auto &row : mat2)
+    {
+        for (double val : row)
+        {
+            // REQUIRE_THAT(obs.outputs[0], WithinRel(0.97454, 0.0001));
+
+            std::cout << val << " ";
+        }
+        std::cout << '\n';
+    }
 }
