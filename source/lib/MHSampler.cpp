@@ -3,6 +3,7 @@
 template <typename REAL>
 MHSampler<REAL>::MHSampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo, int numPoints, REAL stepSize) : Sampler<REAL>(filePath, modelFunc, paraInfo)
 {
+    this->name = "MHSampler";
     this->numPoints = numPoints;
     this->stepSize = stepSize;
 }
