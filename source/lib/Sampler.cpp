@@ -14,6 +14,8 @@ Sampler<REAL>::Sampler(std::string filePath, std::function<REAL(REAL, const std:
     this->numBins = numBins;
 
     this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
+    this->paraVals = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
+
     this->peaks = std::vector<REAL>(this->numParas);
     this->means = std::vector<REAL>(this->numParas);
     this->stdDevs = std::vector<REAL>(this->numParas);
@@ -153,6 +155,7 @@ void Sampler<REAL>::summaryCalculator()
         {
             marDis = this->marDis[i][j];
             paraVal = paraMin + (j + 0.5) * binWidth;
+            this->paraVals[i][j] = paraVal;
             sum += marDis * paraVal;
             sumForDev += marDis * paraVal * paraVal;
             // std::cout <<"para: "<<i<<" bin: "<<j<<" sumForDev: "<<sumForDev<<std::endl;
@@ -177,3 +180,43 @@ void Sampler<REAL>::summaryCalculator()
 }
 template void Sampler<float>::summaryCalculator();
 template void Sampler<double>::summaryCalculator();
+
+template <typename REAL>
+void Sampler<REAL>::marDisPlotter()
+{
+    for (int i = 0; i < this->numParas; i++)
+    {
+    std::vector<REAL> x_values = this->paraVals[i]; 
+    std::vector<REAL> probabilities =this->marDis[i]; 
+
+    bar(x_values, probabilities);
+    std::string file_path = "plots/distribution_plot.png";
+    std::string title_str = "para name = " + this->paraInfo[i].name+", mean = " + std::to_string(this->means[i]) + ", std deviation = " + std::to_string(this->means[i]);
+    std::string x_str = "para value";
+    std::string y_str = "Possibility";
+    bar(x_values, probabilities);
+    title(title_str);
+    xlabel(x_str);
+    ylabel(y_str);
+
+    std::string folder_path_1 = "plots";
+    std::string folder_path_2 = "numParas"+std::to_string(this->numParas)+"numbins"+std::to_string(this->numBins)+this->name;
+    std::string full_folder_path = folder_path_1 + "/" + folder_path_2;
+
+    std::string file_name = "distribution_"+this->paraInfo[i].name+".png";
+    std::string full_path = full_folder_path + "/" + file_name;
+
+    if (!std::filesystem::exists(folder_path_1)) {
+        std::filesystem::create_directories(folder_path_1);
+    }
+
+    if (!std::filesystem::exists(full_folder_path)) {
+        std::filesystem::create_directories(full_folder_path);
+    }
+
+    save(full_path);
+    // show();
+    }
+}
+template void Sampler<float>::marDisPlotter();
+template void Sampler<double>::marDisPlotter();
