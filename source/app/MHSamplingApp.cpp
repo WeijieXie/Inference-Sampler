@@ -53,8 +53,8 @@ int main(int argc, char *argv[])
         }
         else
         {
-            std::cout << "Unknown or incomplete argument: " << arg << std::endl;
-            return 1;
+            std::cout << "Usage: -f <file_path> -n <number_of_bins> -s <maximum_number_of_samples>" << std::endl;
+            return 0;
         }
     }
     auto sampler =createSampler(maxNumSample,filePath,modelFunc,paraVec_4d,numBins);

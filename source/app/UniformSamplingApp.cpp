@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
         }
         else
         {
-            std::cout << "Unknown or incomplete argument: " << arg << std::endl;
-            return 1;
+            std::cout << "Usage: -f <file_path> -n <number_of_bins>" << std::endl;
+            return 0;
         }
     }
     
