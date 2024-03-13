@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
     uniformSampler.numBinsSetter(numBins);
     uniformSampler.sample();
     uniformSampler.summaryCalculator();
+    uniformSampler.marDisPlotter();
 
     return 0;
 }

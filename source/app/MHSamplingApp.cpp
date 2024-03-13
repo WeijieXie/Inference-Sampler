@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     sampler->numBinsSetter(numBins);
     sampler->sample();
     sampler->summaryCalculator();
+    sampler->marDisPlotter();
 
     return 0;
 }
