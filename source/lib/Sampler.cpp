@@ -174,7 +174,7 @@ void Sampler<REAL>::summaryCalculator()
         this->means.push_back(mean);
         this->stdDevs.push_back(stdDev);
         std::cout << "For parameter"<< "\"" << this->paraInfo[i].name << "\": "
-                  << "peak_value = " << peakParaValue 
+                  << "best_value = " << peakParaValue 
                   << "; mean = " << mean 
                   << "; std_deviation = " << stdDev 
                   << std::endl;
@@ -184,7 +184,7 @@ template void Sampler<float>::summaryCalculator();
 template void Sampler<double>::summaryCalculator();
 
 template <typename REAL>
-void Sampler<REAL>::marDisPlotter()
+void Sampler<REAL>::marDisPlotter(int maxSamples)
 {
     for (int i = 0; i < this->numParas; i++)
     {
@@ -193,7 +193,7 @@ void Sampler<REAL>::marDisPlotter()
 
     bar(x_values, probabilities);
     // std::string file_path = "plots/distribution_plot.png";
-    std::string title_str = "para name = " + this->paraInfo[i].name+", mean = " + std::to_string(this->means[i]) + ", std deviation = " + std::to_string(this->means[i]);
+    std::string title_str = "para " + this->paraInfo[i].name+", best value = " + std::to_string(this->peaks[i]) +", mean = " + std::to_string(this->means[i]) + ", std deviation = " + std::to_string(this->stdDevs[i]);
     std::string x_str = "para value";
     std::string y_str = "Possibility";
     bar(x_values, probabilities);
@@ -201,8 +201,14 @@ void Sampler<REAL>::marDisPlotter()
     xlabel(x_str);
     ylabel(y_str);
 
+    std::string maxSamples_str = "";
+    if (maxSamples != 0)
+    {
+        maxSamples_str = "_maxSamples"+std::to_string(maxSamples);
+    }
+
     std::string folder_path_1 = "plots";
-    std::string folder_path_2 = "numParas"+std::to_string(this->numParas)+"numbins"+std::to_string(this->numBins)+this->name;
+    std::string folder_path_2 = this->name+"_numParas"+std::to_string(this->numParas)+"_numbins"+std::to_string(this->numBins)+maxSamples_str;
     std::string full_folder_path = folder_path_1 + "/" + folder_path_2;
 
     std::string file_name = "distribution_"+this->paraInfo[i].name+".png";
@@ -220,5 +226,5 @@ void Sampler<REAL>::marDisPlotter()
     // show();
     }
 }
-template void Sampler<float>::marDisPlotter();
-template void Sampler<double>::marDisPlotter();
+template void Sampler<float>::marDisPlotter(int maxSamples);
+template void Sampler<double>::marDisPlotter(int maxSamples);

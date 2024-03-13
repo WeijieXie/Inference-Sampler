@@ -73,7 +73,7 @@ public:
     std::vector<REAL> stdDevsGetter();
 
     void summaryCalculator();
-    void marDisPlotter();
+    void marDisPlotter(int maxSamples = 0);
 
     virtual void sample() = 0;
 };
