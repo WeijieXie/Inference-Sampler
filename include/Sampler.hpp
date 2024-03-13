@@ -7,6 +7,12 @@
 #include <functional>
 #include <cmath>
 #include <iostream>
+#include <filesystem>
+#include <sstream>
+
+#include <matplot/matplot.h>
+using namespace matplot;
+
 /**
  * @brief Class for holding / passing information about parameters to be sampled
  *
@@ -30,6 +36,8 @@ template <typename REAL>
 class Sampler
 {
 protected:
+    std::string name="UniformSampler";
+
     Observations<REAL> observations;
     std::vector<ParamInfo<REAL>> paraInfo;
     std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc;
@@ -41,6 +49,7 @@ protected:
 
     std::vector<std::vector<REAL>> sampledChain;
     std::vector<std::vector<REAL>> marDis;
+    std::vector<std::vector<REAL>> paraVals;
     // std::function<REAL(REAL, std::vector<REAL>&)> : modelFunc(std::move(f)){};
 
     std::vector<REAL> peaks;
@@ -64,6 +73,7 @@ public:
     std::vector<REAL> stdDevsGetter();
 
     void summaryCalculator();
+    void marDisPlotter();
 
     virtual void sample() = 0;
 };
