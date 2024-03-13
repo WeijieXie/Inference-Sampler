@@ -189,9 +189,7 @@ void Sampler<REAL>::marDisPlotter()
     for (int i = 0; i < this->numParas; i++)
     {
     std::vector<REAL> x_values = this->paraVals[i]; 
-    std::cout<<x_values.size()<<"...000000000000000000000"<<std::endl;
     std::vector<REAL> probabilities =this->marDis[i]; 
-    std::cout<<probabilities.size()<<"...000000000000000000000"<<std::endl;
 
     bar(x_values, probabilities);
     // std::string file_path = "plots/distribution_plot.png";

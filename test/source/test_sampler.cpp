@@ -254,6 +254,7 @@ TEST_CASE("Test", "[Data Process]")
     std::function<double(double, const std::vector<double> &)> modelFunc = [](double x, const std::vector<double> &params) -> double
     {
         double result = params[0] * (1/x)- params[1] * x; // Example implementation
+        // double result = params[0] * x*x*x + params[1] * x*x+ params[2] * x+ params[3];
         return result;
     };
 
@@ -261,8 +262,14 @@ TEST_CASE("Test", "[Data Process]")
     const ParamInfo<double> paraInfo2 = ParamInfo<double>(0, 5, "b");
     const std::vector<ParamInfo<double>> paraVec_2d = {paraInfo1, paraInfo2};
 
+    // const ParamInfo<double> paraInfo1=ParamInfo<double>(-3,3,"a");
+    // const ParamInfo<double> paraInfo2=ParamInfo<double>(-3,3,"b");
+    // const ParamInfo<double> paraInfo3=ParamInfo<double>(-3,3,"c");
+    // const ParamInfo<double> paraInfo4=ParamInfo<double>(-3,3,"d");
+    // const std::vector<ParamInfo<double>> paraVec_4d = {paraInfo1,paraInfo2,paraInfo3,paraInfo4};
+
     UniformSampler<double> uniformSampler(filePath, modelFunc, paraVec_2d);
-    uniformSampler.numBinsSetter(10);
+    uniformSampler.numBinsSetter(100);
     uniformSampler.sample();
     uniformSampler.summaryCalculator();
 
@@ -273,13 +280,14 @@ TEST_CASE("Test", "[Data Process]")
     //     return result;
     // };
 
-    int numPoints = 10000;
-    double stepSize = 0.1;
+    int numPoints = 100000;
+    double stepSize = 0.05;
 
     MHSampler<double> mhSampler(filePath, modelFunc, paraVec_2d, numPoints, stepSize);
-    mhSampler.numBinsSetter(10);
+    mhSampler.numBinsSetter(100);
     mhSampler.sample();
     mhSampler.summaryCalculator();
+    mhSampler.marDisPlotter();
 
     std::vector<std::vector<double>> mat1 = uniformSampler.marDisGetter();
     // std::cout << mat.size() << " ";
