@@ -40,7 +40,7 @@ void MHSampler<REAL>::sample()
     REAL vi = 0;
 
     REAL intePart = 0.0;
-    // std::vector<REAL> paraLikelihood;
+    std::vector<REAL> chainElement;
 
     for (int j = 0; j < this->numParas; j++)
     {
@@ -95,12 +95,18 @@ void MHSampler<REAL>::sample()
             likelihood = likelihoodPre;
         }
 
+        chainElement.clear();
         for (int k = 0; k < this->numParas; k++)
         {
             std::modf(v.at(k) / (1 / REAL(this->numBins)),&intePart);
             // this->marDis[k].at(std::floor(v.at(k) / (1 / REAL(this->numBins)))) += 1 / REAL(this->numPoints);
             this->marDis[k].at(intePart) += 1 / REAL(this->numPoints);
+
+            chainElement.push_back(p[k]);
         }
+
+        chainElement.push_back(likelihood);
+        this->sampledChain.push_back(chainElement);
 
         // paraLikelihood = p;
         // paraLikelihood.push_back(likelihood)
