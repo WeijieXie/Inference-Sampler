@@ -11,6 +11,8 @@ Sampler<REAL>::Sampler(std::string filePath, std::function<REAL(REAL, const std:
     this->paraInfo = paraInfo;
     this->numParas = paraInfo.size();
 
+    if (numBins <= 0)
+        throw std::domain_error("number of bins should be positive, instead of" + numBins);
     this->numBins = numBins;
 
     this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
