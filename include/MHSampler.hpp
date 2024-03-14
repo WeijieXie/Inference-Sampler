@@ -16,6 +16,7 @@ private :
 
 public:
     MHSampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo, int numPoints, REAL stepSize);
+    MHSampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo);
     // MHSampler() : Sampler<REAL>(){};
     void sample();
 };

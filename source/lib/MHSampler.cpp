@@ -1,15 +1,25 @@
 #include "MHSampler.hpp"
 
 template <typename REAL>
-MHSampler<REAL>::MHSampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo, int numPoints, REAL stepSize) : Sampler<REAL>(filePath, modelFunc, paraInfo)
+MHSampler<REAL>::MHSampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo, int numPoints, REAL stepSize): Sampler<REAL>(filePath, modelFunc, paraInfo)
 {
     this->name = "MHSampler";
     this->numPoints = numPoints;
     this->stepSize = stepSize;
 }
-
 template MHSampler<float>::MHSampler(std::string filePath, std::function<float(float, const std::vector<float> &)> modelFunc, std::vector<ParamInfo<float>> paraInfo, int numPoints, float stepSize);
 template MHSampler<double>::MHSampler(std::string filePath, std::function<double(double, const std::vector<double> &)> modelFunc, std::vector<ParamInfo<double>> paraInfo, int numPoints, double stepSize);
+
+template <typename REAL>
+MHSampler<REAL>::MHSampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo) : Sampler<REAL>(filePath, modelFunc, paraInfo)
+{
+    this->name = "MHSampler";
+    this->numPoints = 100000;
+    this->stepSize = REAL(0.01);
+}
+
+template MHSampler<float>::MHSampler(std::string filePath, std::function<float(float, const std::vector<float> &)> modelFunc, std::vector<ParamInfo<float>> paraInfo);
+template MHSampler<double>::MHSampler(std::string filePath, std::function<double(double, const std::vector<double> &)> modelFunc, std::vector<ParamInfo<double>> paraInfo);
 
 template <typename REAL>
 void MHSampler<REAL>::sample()
@@ -42,6 +52,7 @@ void MHSampler<REAL>::sample()
     REAL intePart = 0.0;
     std::vector<REAL> chainElement;
 
+    chainElement.clear();
     for (int j = 0; j < this->numParas; j++)
     {
         v.at(j) = uniformDist(eng);
@@ -50,10 +61,14 @@ void MHSampler<REAL>::sample()
         this->marDis[j].at(std::floor(v.at(j) / (1 / REAL(this->numBins)))) += 1 / REAL(this->numPoints);
 
         // std::cout << v.at(j) << std::endl;
+        chainElement.push_back(p[j]);
     }
 
     REAL likelihood = this->likelihood(p);
     REAL likelihoodPre = 0;
+
+    chainElement.push_back(likelihood);
+    this->sampledChain.push_back(chainElement);
 
     // this->sampledChain.push_back(p);
 
