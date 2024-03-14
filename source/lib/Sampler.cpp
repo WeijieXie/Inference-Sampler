@@ -21,7 +21,6 @@ Sampler<REAL>::Sampler(std::string filePath, std::function<REAL(REAL, const std:
     this->peaks = std::vector<REAL>(this->numParas);
     this->means = std::vector<REAL>(this->numParas);
     this->stdDevs = std::vector<REAL>(this->numParas);
-
 }
 template Sampler<float>::Sampler(std::string filePath, std::function<float(float, const std::vector<float> &)> modelFunc, std::vector<ParamInfo<float>> paraInfo, int numBins);
 template Sampler<double>::Sampler(std::string filePath, std::function<double(double, const std::vector<double> &)> modelFunc, std::vector<ParamInfo<double>> paraInfo, int numBins);
@@ -30,7 +29,6 @@ template <typename REAL>
 void Sampler<REAL>::paraInfoSetter(std::string name, REAL min, REAL max)
 {
     paraInfo.push_back(ParamInfo(min, max, name));
-    // this->marDis = std::vector(this->paraInfo.size(),std::vector<REAL>(this->numBins));
     this->marDis = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
     this->paraVals = std::vector<std::vector<REAL>>(paraInfo.size(), std::vector<REAL>(numBins));
 }
@@ -110,7 +108,6 @@ REAL Sampler<REAL>::likelihood(const std::vector<REAL> &paras)
     REAL err = 0;
     while (it_inputs != inputs.end() && it_outputs != outputs.end() && it_sigmas != sigmas.end())
     {
-        // Perform your operations with *it_inputs, *it_outputs, and *it_sigmas
         pred = modelFunc(*it_inputs, paras);
         err = pred - *it_outputs;
         Li = -(err * err) / (2 * *it_sigmas * *it_sigmas);
@@ -158,27 +155,34 @@ void Sampler<REAL>::summaryCalculator()
         for (int j = 0; j < numBins; j++)
         {
             marDis = this->marDis[i][j];
+
+            // update the paraVal (the mid of the bin) to facilitate the following marDisPlotter
             paraVal = paraMin + (j + 0.5) * binWidth;
             this->paraVals[i][j] = paraVal;
+
             sum += marDis * paraVal;
             sumForDev += marDis * paraVal * paraVal;
-            // std::cout <<"para: "<<i<<" bin: "<<j<<" sumForDev: "<<sumForDev<<std::endl;
-            // std::cout <<"para: "<<i<<" bin: "<<j<<" marDis: "<<marDis<<std::endl;
+
+            // find the best value of the para
             if (marDis > maxMarDis)
             {
                 maxMarDis = marDis;
                 peakParaValue = paraVal;
             }
         }
+
         mean = sum / numBins;
         stdDev = sqrt(sumForDev - pow(mean, 2));
+
         this->peaks.push_back(peakParaValue);
         this->means.push_back(mean);
         this->stdDevs.push_back(stdDev);
-        std::cout << "For parameter"<< "\"" << this->paraInfo[i].name << "\": "
-                  << "best_value = " << peakParaValue 
-                  << "; mean = " << mean 
-                  << "; std_deviation = " << stdDev 
+
+        std::cout << "For parameter"
+                  << "\"" << this->paraInfo[i].name << "\": "
+                  << "best_value = " << peakParaValue
+                  << "; mean = " << mean
+                  << "; std_deviation = " << stdDev
                   << std::endl;
     }
 }
@@ -190,42 +194,43 @@ void Sampler<REAL>::marDisPlotter(int maxSamples)
 {
     for (int i = 0; i < this->numParas; i++)
     {
-    std::vector<REAL> x_values = this->paraVals[i]; 
-    std::vector<REAL> probabilities =this->marDis[i]; 
+        std::vector<REAL> x_values = this->paraVals[i];
+        std::vector<REAL> probabilities = this->marDis[i];
 
-    bar(x_values, probabilities);
-    // std::string file_path = "plots/distribution_plot.png";
-    std::string title_str = "para " + this->paraInfo[i].name+", best value = " + std::to_string(this->peaks[i]) +", mean = " + std::to_string(this->means[i]) + ", std deviation = " + std::to_string(this->stdDevs[i]);
-    std::string x_str = "para value";
-    std::string y_str = "Possibility";
-    bar(x_values, probabilities);
-    title(title_str);
-    xlabel(x_str);
-    ylabel(y_str);
+        std::string title_str = "para " + this->paraInfo[i].name + ", best value = " + std::to_string(this->peaks[i]) + ", mean = " + std::to_string(this->means[i]) + ", std deviation = " + std::to_string(this->stdDevs[i]);
+        std::string x_str = "para value";
+        std::string y_str = "Possibility";
 
-    std::string maxSamples_str = "";
-    if (maxSamples != 0)
-    {
-        maxSamples_str = "_maxSamples"+std::to_string(maxSamples);
-    }
+        bar(x_values, probabilities);
+        title(title_str);
+        xlabel(x_str);
+        ylabel(y_str);
 
-    std::string folder_path_1 = "plots";
-    std::string folder_path_2 = this->name+"_numParas"+std::to_string(this->numParas)+"_numbins"+std::to_string(this->numBins)+maxSamples_str;
-    std::string full_folder_path = folder_path_1 + "/" + folder_path_2;
+        std::string maxSamples_str = "";
+        if (maxSamples != 0)
+        {
+            maxSamples_str = "_maxSamples" + std::to_string(maxSamples);
+        }
 
-    std::string file_name = "distribution_"+this->paraInfo[i].name+".png";
-    std::string full_path = full_folder_path + "/" + file_name;
+        std::string folder_path_1 = "plots";
+        std::string folder_path_2 = this->name + "_numParas" + std::to_string(this->numParas) + "_numbins" + std::to_string(this->numBins) + maxSamples_str;
+        std::string full_folder_path = folder_path_1 + "/" + folder_path_2;
 
-        if (!std::filesystem::exists(folder_path_1)) {
+        std::string file_name = "distribution_" + this->paraInfo[i].name + ".png";
+        std::string full_path = full_folder_path + "/" + file_name;
+
+        if (!std::filesystem::exists(folder_path_1))
+        {
             std::filesystem::create_directories(folder_path_1);
         }
 
-        if (!std::filesystem::exists(full_folder_path)) {
+        if (!std::filesystem::exists(full_folder_path))
+        {
             std::filesystem::create_directories(full_folder_path);
         }
 
-    save(full_path);
-    // show();
+        save(full_path);
+        // show();
     }
 }
 template void Sampler<float>::marDisPlotter(int maxSamples);

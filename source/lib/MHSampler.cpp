@@ -1,7 +1,7 @@
 #include "MHSampler.hpp"
 
 template <typename REAL>
-MHSampler<REAL>::MHSampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo, int numPoints, REAL stepSize): Sampler<REAL>(filePath, modelFunc, paraInfo)
+MHSampler<REAL>::MHSampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo, int numPoints, REAL stepSize) : Sampler<REAL>(filePath, modelFunc, paraInfo)
 {
     this->name = "MHSampler";
     this->numPoints = numPoints;
@@ -30,17 +30,14 @@ void MHSampler<REAL>::sample()
         this->paraMins.push_back(iter->min);
         this->paraMaxs.push_back(iter->max);
         this->paraScales.push_back(iter->max - iter->min);
-        // std::cout<<"min: "<<iter->min<<std::endl;j
         this->binWidths.push_back((iter->max - iter->min) / this->numBins);
-        // std::cout<<"width: "<<width<<std::endl;
     }
 
+    // generate values from different probability distributions
     std::random_device rd;
     std::default_random_engine eng(rd());
     std::normal_distribution<REAL> normalDist(0.0, this->stepSize);
     std::uniform_real_distribution<REAL> uniformDist(0.0, 1.0);
-
-    // std::vector<std::vector<REAL>> marDisPre = this->marDis;
 
     std::vector<REAL> p(this->numParas);
     std::vector<REAL> pPre(this->numParas);
@@ -53,50 +50,49 @@ void MHSampler<REAL>::sample()
     std::vector<REAL> chainElement;
 
     chainElement.clear();
+
+    // generate the first sample point
     for (int j = 0; j < this->numParas; j++)
     {
         v.at(j) = uniformDist(eng);
         p.at(j) = this->paraMins.at(j) + v.at(j) * (this->paraScales.at(j));
 
+        // add normalized value to the entry in marginal distribution matrix if the sample lands in the corresponding bin
         this->marDis[j].at(std::floor(v.at(j) / (1 / REAL(this->numBins)))) += 1 / REAL(this->numPoints);
 
-        // std::cout << v.at(j) << std::endl;
-        chainElement.push_back(p[j]);
+        chainElement.push_back(p[j]); // record the coordinate
     }
 
     REAL likelihood = this->likelihood(p);
     REAL likelihoodPre = 0;
 
-    chainElement.push_back(likelihood);
+    // update the sampledChain
+    chainElement.push_back(std::exp(likelihood));
     this->sampledChain.push_back(chainElement);
-
-    // this->sampledChain.push_back(p);
 
     for (int i = 0; i < this->numPoints - 1; i++)
     {
-        // marDisPre = this->marDis;
+        // backup the previous point location for that the update may be rejected
         vPre = v;
         pPre = p;
         likelihoodPre = likelihood;
+
         for (int j = 0; j < this->numParas; j++)
         {
             vi = normalDist(eng);
             if (v.at(j) + vi > 1)
             {
-                // p.at(j) = p.at(j) + vi - 1;
-                v.at(j) = std::modf(v.at(j) + vi, &intePart);
-                // std::cout << v.at(j) << " 1111111111111111" << std::endl;
+                v.at(j) = std::modf(v.at(j) + vi, &intePart); // take the fraction part if is larger than 1
             }
             else if (v.at(j) + vi < 0)
             {
-                v.at(j) = std::modf(v.at(j) + vi, &intePart) + 1;
-                // v.at(j) = intePart + 1;
-                // std::cout << v.at(j) << " 2222222222222222" << std::endl;
+                v.at(j) = std::modf(v.at(j) + vi, &intePart) + 1; // take (fraction part + 1) if is larger than 1
             }
             else
             {
                 v.at(j) += vi;
             }
+
             p.at(j) = this->paraMins.at(j) + v.at(j) * (this->paraScales.at(j));
         }
 
@@ -104,7 +100,7 @@ void MHSampler<REAL>::sample()
 
         if (likelihood <= likelihoodPre && likelihood - likelihoodPre <= log(uniformDist(eng)))
         {
-            // this->marDis = marDisPre;
+            // take the backup value of the previous point when rejected
             v = vPre;
             p = pPre;
             likelihood = likelihoodPre;
@@ -113,19 +109,16 @@ void MHSampler<REAL>::sample()
         chainElement.clear();
         for (int k = 0; k < this->numParas; k++)
         {
-            std::modf(v.at(k) / (1 / REAL(this->numBins)),&intePart);
-            // this->marDis[k].at(std::floor(v.at(k) / (1 / REAL(this->numBins)))) += 1 / REAL(this->numPoints);
+            // add normalized value to the entry in marginal distribution matrix if the sample lands in the corresponding bin
+            std::modf(v.at(k) / (1 / REAL(this->numBins)), &intePart);
             this->marDis[k].at(intePart) += 1 / REAL(this->numPoints);
 
             chainElement.push_back(p[k]);
         }
 
-        chainElement.push_back(likelihood);
+        // update the sampledChain
+        chainElement.push_back(std::exp(likelihood));
         this->sampledChain.push_back(chainElement);
-
-        // paraLikelihood = p;
-        // paraLikelihood.push_back(likelihood)
-        // this->sampledChain.push_back(p);
     }
 }
 

@@ -23,9 +23,6 @@ void Observations<REAL>::loadData(std::string filename)
         if (line_stream.fail() == 1)
             throw std::invalid_argument("unmatched type appears in the line: " + line);
     }
-    // std::cout<<"inputs: "<<inputs[1]<<std::endl;
-    // std::cout<<"outputs: "<<outputs[0]<<std::endl;
-    // std::cout<<"sigmas: "<<sigmas[2]<<std::endl;
 }
 template void Observations<double>::loadData(std::string);
 template void Observations<float>::loadData(std::string);

@@ -31,16 +31,16 @@ public:
     REAL max = 1;
     REAL width = max - min;
     std::string name;
-};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+};
 template <typename REAL>
 class Sampler
 {
 protected:
-    std::string name="UniformSampler";
+    std::string name = "UniformSampler";
 
     Observations<REAL> observations;
     std::vector<ParamInfo<REAL>> paraInfo;
-    std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc;
+    std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc;
     int numParas;
     int numBins = 100;
 
@@ -56,14 +56,15 @@ protected:
     std::vector<REAL> means;
     std::vector<REAL> stdDevs;
 
-    REAL likelihood(const std::vector<REAL>& paras);
+    REAL likelihood(const std::vector<REAL> &paras);
+
 public:
-    Sampler()=default;
-    Sampler(std::string filePath,std::function<REAL(REAL, const std::vector<REAL>&)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo,int numBins = 100);
+    Sampler() = default;
+    Sampler(std::string filePath, std::function<REAL(REAL, const std::vector<REAL> &)> modelFunc, std::vector<ParamInfo<REAL>> paraInfo, int numBins = 100);
     ~Sampler(){};
 
     void paraInfoSetter(std::string name, REAL min, REAL max);
-    void modelFuncSetter(std::function<REAL(REAL x, const std::vector<REAL>&)> paras);
+    void modelFuncSetter(std::function<REAL(REAL x, const std::vector<REAL> &)> paras);
     void numBinsSetter(int numBins);
     std::vector<std::vector<REAL>> sampledChainGetter();
     std::vector<std::vector<REAL>> marDisGetter();
